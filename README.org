@@ -65,7 +65,7 @@ curl https://kojipkgs.fedoraproject.org/packages/git/2.4.3/1.fc22/src/git-2.4.3-
 Build the package using minimock.
 
 #+BEGIN_SRC bash
-minimock.sh -y -D /tmp/f22 git-2.4.3-1.fc22.src.rpm
+minimock -y -D /tmp/f22 git-2.4.3-1.fc22.src.rpm
 #+END_SRC
 
 After a successful build, the resulting packages will be located in
