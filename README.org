@@ -22,7 +22,7 @@ minimock -D MACHINEDIR [ OPTIONS ] SRPM
 *** Options
 | -h            | Show program help.                                                                                                                                             |
 | -L LOGFILE    | Path to a file that will be used for logging.                                                                                                                  |
-| -M MACHINE    | Machine that should be used for building the package. By default, machines are located in *//var/lib/machines/*. See *systemd-nspawn(1)* for more information. |
+| -M MACHINE    | Machine that should be used for building the package. By default, machines are located in */var/lib/machines/*. See *systemd-nspawn(1)* for more information.  |
 | -D MACHINEDIR | Directory where rootfs of a machine is located. See *systemd-nspawn(1)* for more information.                                                                  |
 | -y            | Answer every question with 'yes'. This is used when the user is queried about installation of missing dependencies on the machine.                             |
 
