@@ -1,0 +1,82 @@
+* Minimock
+Minimock is a tiny version of [[https://fedoraproject.org/wiki/Projects/Mock][mock]], that is used only for building
+packages of the same architecture as the host system. For building, an
+already existing root filesystem, also known as a chroot or container,
+is used. Minimock internally makes use of [[http://www.freedesktop.org/software/systemd/man/systemd-nspawn.html][systemd-nspawn]], [[http://rpm.org][rpm]] and [[https://fedoraproject.org/wiki/Yum][yum]].
+To perform privileged tasks, such as running systemd-nspawn, sudo is
+used.
+
+** Installation
+
+Simply run /make install/. To uninstall, execute /make uninstall/.
+
+** Using minimock
+Basic invocation of minimock is using either *-M*, or *-D*. The last
+argument on the command line must be source RPM that is to be built.
+
+#+BEGIN_SRC bash
+minimock -M MACHINE    [ OPTIONS ] SRPM
+minimock -D MACHINEDIR [ OPTIONS ] SRPM
+#+END_SRC
+
+*** Options
+| -h            | Show program help.                                                                                                                                             |
+| -L LOGFILE    | Path to a file that will be used for logging.                                                                                                                  |
+| -M MACHINE    | Machine that should be used for building the package. By default, machines are located in *//var/lib/machines/*. See *systemd-nspawn(1)* for more information. |
+| -D MACHINEDIR | Directory where rootfs of a machine is located. See *systemd-nspawn(1)* for more information.                                                                  |
+| -y            | Answer every question with 'yes'. This is used when the user is queried about installation of missing dependencies on the machine.                             |
+
+*** Example
+
+Let's demonstrate how to use minimock to build an example package. A
+minimal build of Fedora 22 will serve as a build environment.
+
+This demo assumes that minimock is already installed on the
+system. All the commands below will be executed from */tmp*.
+
+#+BEGIN_SRC bash
+cd /tmp
+#+END_SRC
+
+First, create a temporary directory that will hold the build root.
+Note that you should *not* use /tmp if it's mounted as a tmpfs and you
+are short on memory, as the build root and the build process itself
+will consume a substantial amount of space.
+
+#+BEGIN_SRC bash
+mkdir /tmp/f22
+#+END_SRC
+
+Install a minimal Fedora 22 to host the environment for minimock. This
+command must be run as root.
+
+#+BEGIN_SRC bash
+# yum -y --releasever=22 --nogpg --installroot=/tmp/f22 --disablerepo='*' --enablerepo=fedora install systemd yum make gcc
+#+END_SRC
+
+Create a source rpm to build. For the purpose of this demonstration, a
+git srpm will be downloaded from Koji, the official Fedora build
+system.
+
+#+BEGIN_SRC bash
+curl https://kojipkgs.fedoraproject.org/packages/git/2.4.3/1.fc22/src/git-2.4.3-1.fc22.src.rpm
+#+END_SRC
+
+Build the package using minimock.
+
+#+BEGIN_SRC bash
+minimock.sh -y -D /tmp/f22 git-2.4.3-1.fc22.src.rpm
+#+END_SRC
+
+After a successful build, the resulting packages will be located in
+*/tmp/git-2.4.3-1*.
+
+** Known bugs
+
+If make or gcc are, for some reason, missing on the guest machine, and
+the package the user is about to build requires those to be built,
+rpmbuild doesn't recognize make and gcc as failed dependencies and the
+build fails. Probably nothing that can be fixed right now, as there is
+no way to know without tedious and very complex analysis of the source
+rpm.
+
