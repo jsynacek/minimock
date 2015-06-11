@@ -51,7 +51,7 @@ Install a minimal Fedora 22 to host the environment for minimock. This
 command must be run as root.
 
 #+BEGIN_SRC bash
-# yum -y --releasever=22 --nogpg --installroot=/tmp/f22 --disablerepo='*' --enablerepo=fedora install systemd yum make gcc
+yum -y --releasever=22 --nogpg --installroot=/tmp/f22 --disablerepo='*' --enablerepo=fedora install systemd yum make gcc
 #+END_SRC
 
 Create a source rpm to build. For the purpose of this demonstration, a
